@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/update"
+        android:orderInCategory="1"
+        android:title="@string/update" />
+    <item
         android:id="@+id/change_city"
         android:orderInCategory="1"
         android:title="@string/change_city" />
+    <item
+        android:id="@+id/change_coords"
+        android:orderInCategory="1"
+        android:title="@string/change_coords" />
 
 </menu>
