@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        loadText();
+        loadCity();
 
         retrofit = new Retrofit.Builder()
                 .baseUrl("http://api.openweathermap.org/data/2.5/")
@@ -83,9 +83,9 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(ProgressBar.INVISIBLE);
     }
 
-    void getWeatherCoords(double lat, double lon) {
+    void getWeatherCoords(Coord coordsWeather) {
         progressBar.setVisibility(ProgressBar.VISIBLE);
-        Call<WeatherModel> messages = weatherApi.getWeatherCoords(lat, lon, token);
+        Call<WeatherModel> messages = weatherApi.getWeatherCoords(coordsWeather.getLat(), coordsWeather.getLon(), token);
         updateInfo(messages);
         progressBar.setVisibility(ProgressBar.INVISIBLE);
     }
@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
 
                 if (weatherCity != null) {
                     city = weatherCity.getName();
-                    saveText(city);
                     coords = weatherCity.getCoord();
                     cityField.setText(weatherCity.getName() + ", " + weatherCity.getSys().getCountry());
                     detailsField.setText(weatherCity.getWeather().get(0).getDescription().toUpperCase() +
@@ -109,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                             "\n" + getString(R.string.pressure) + " " + weatherCity.getMain().getPressure() + " hPa");
                     currentTemperatureField.setText(String.format("%.2f", weatherCity.getMain().getTemp()) + " ℃");
                     DateFormat df = DateFormat.getDateTimeInstance();
-                    String updatedOn = df.format(new Date((weatherCity.getDt() + 10800) * 1000));
+                    String updatedOn = df.format(new Date(weatherCity.getDt() * 1000));
                     updatedField.setText(getString(R.string.last_update) + " " + updatedOn);
                 } else {
                     cityField.setText("");
@@ -167,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        saveText(input.getText().toString());
+                        city = input.getText().toString();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -178,8 +177,8 @@ public class MainActivity extends AppCompatActivity {
                 });
         builder.show();
     }
-//fresko
-    //room
+
+    @SuppressLint("SetTextI18n")
     private void inputCoords() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -195,7 +194,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         double lat = Double.valueOf(inputLat.getText().toString());
                         double lon = Double.valueOf(inputLon.getText().toString());
-                        getWeatherCoords(lat, lon);
+                        coords.setLat(lat);
+                        coords.setLon(lon);
+                        getWeatherCoords(coords);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -207,17 +208,22 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
-    void saveText(String text) {
+    void saveCity() {
         sPref = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor ed = sPref.edit();
-        ed.putString(SAVED_TEXT, text);
+        ed.putString(SAVED_TEXT, city);
         ed.apply();
-        city = text;
         getWeatherCity();
     }
 
-    void loadText() {
+    void loadCity() {
         sPref = getPreferences(MODE_PRIVATE);
         city = sPref.getString(SAVED_TEXT, "");
+    }
+
+    @Override
+    protected void onDestroy() {
+        saveCity();
+        super.onDestroy();
     }
 }
