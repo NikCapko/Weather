@@ -82,7 +82,7 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
             String time = weather.getDtTxt().substring(11, 16);
             String[] date = weather.getDtTxt().substring(5, 10).split("-");
-            itemViewHolder.tvTime.setText(time + " " + date[1] + "-" + date[0]);
+            itemViewHolder.tvTime.setText(time + " " + date[1] + "." + date[0]);
             Picasso.get().load("http://openweathermap.org/img/w/" + weather.getWeather().get(0).getIcon() + ".png").into(itemViewHolder.ivIcon);
             itemViewHolder.tvTemperature.setText(weather.getMain().getTemp().toString() + " ℃");
             itemViewHolder.tvDetail.setText(weather.getWeather().get(0).getDescription().toUpperCase());
