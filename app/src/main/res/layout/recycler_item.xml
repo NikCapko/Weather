@@ -7,15 +7,25 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="15dp">
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/tv_time"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text=""
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tv_detail"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text=""
+            android:layout_marginLeft="20dp"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
     </LinearLayout>
@@ -41,21 +51,12 @@
             android:textColor="@android:color/white"
             android:textSize="35sp" />
 
-        <TextView
-            android:id="@+id/tv_detail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="235dp"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/white" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:text=""/>
+            android:text="" />
     </RelativeLayout>
 
 </LinearLayout>
