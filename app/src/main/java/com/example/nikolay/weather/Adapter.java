@@ -75,10 +75,10 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        WeatherList weather = weatherList.get(position);
         if (holder instanceof HeaderViewHolder) {
             ((HeaderViewHolder) holder).tvCity.setText(city);
         } else {
+            WeatherList weather = weatherList.get(position-1);
             ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
             String time = weather.getDtTxt().substring(11, 16);
             String[] date = weather.getDtTxt().substring(5, 10).split("-");
