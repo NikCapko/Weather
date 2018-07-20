@@ -9,4 +9,8 @@ public interface WeatherApi {
     Call<WeatherModel> getWeatherCity(@Query("q") String cityName, @Query("appid") String token);
     @GET("weather?units=metric&lang=ru")
     Call<WeatherModel> getWeatherCoords(@Query("lat") Double lat, @Query("lon") Double lon, @Query("appid") String token);
+    @GET("forecast?units=metric&lang=ru")
+    Call<WeatherModel> getWeatherCityForecast(@Query("q") String cityName, @Query("appid") String token);
+    @GET("forecast?units=metric&lang=ru")
+    Call<WeatherModel> getWeatherCoordsForecast(@Query("lat") Double lat, @Query("lon") Double lon, @Query("appid") String token);
 }

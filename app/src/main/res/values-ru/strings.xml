@@ -14,4 +14,5 @@
     <string name="lat">Широта</string>
     <string name="lon">Долгота</string>
     <string name="error_net">Проблемы с подключением к интернету</string>
+    <string name="time">Время</string>
 </resources>

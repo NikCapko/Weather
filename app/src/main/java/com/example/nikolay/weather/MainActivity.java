@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
@@ -15,18 +18,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
-
-import java.text.DateFormat;
-import java.util.Date;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,26 +42,14 @@ public class MainActivity extends AppCompatActivity {
     Retrofit retrofit;
     WeatherApi weatherApi;
 
-    @BindView(R.id.city_field)
-    TextView cityField;
-    @BindView(R.id.updated_field)
-    TextView updatedField;
-    @BindView(R.id.progress_bar)
-    ProgressBar progressBar;
-    @BindView(R.id.iv_icon)
-    ImageView ivIcon;
-    @BindView(R.id.current_temperature_field)
-    TextView currentTemperatureField;
-    @BindView(R.id.details_field)
-    TextView detailsField;
-
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(activity_main);
 
-        ButterKnife.bind(this);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler);
 
         loadCity();
 
@@ -82,17 +63,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void getWeatherCity() {
-        progressBar.setVisibility(ProgressBar.VISIBLE);
-        Call<WeatherModel> messages = weatherApi.getWeatherCity(city, token);
+        Call<WeatherModel> messages = weatherApi.getWeatherCityForecast(city, token);
         updateInfo(messages);
-        progressBar.setVisibility(ProgressBar.INVISIBLE);
     }
 
     void getWeatherCoords(Coord coordsWeather) {
-        progressBar.setVisibility(ProgressBar.VISIBLE);
-        Call<WeatherModel> messages = weatherApi.getWeatherCoords(coordsWeather.getLat(), coordsWeather.getLon(), token);
+        Call<WeatherModel> messages = weatherApi.getWeatherCoordsForecast(coordsWeather.getLat(), coordsWeather.getLon(), token);
         updateInfo(messages);
-        progressBar.setVisibility(ProgressBar.INVISIBLE);
     }
 
     void updateInfo(Call<WeatherModel> messages) {
@@ -105,27 +82,14 @@ public class MainActivity extends AppCompatActivity {
                 WeatherModel weatherCity = response.body();
 
                 if (weatherCity != null) {
-                    city = weatherCity.getName();
-                    coords = weatherCity.getCoord();
-                    cityField.setText(weatherCity.getName() + ", " + weatherCity.getSys().getCountry());
-                    detailsField.setText(weatherCity.getWeather().get(0).getDescription().toUpperCase() +
-                            "\n" + getString(R.string.humidity) + " " + weatherCity.getMain().getHumidity() + "%" +
-                            "\n" + getString(R.string.pressure) + " " + weatherCity.getMain().getPressure() + " hPa");
-                    currentTemperatureField.setText(String.format("%.2f", weatherCity.getMain().getTemp()) + " ℃");
-                    DateFormat df = DateFormat.getDateTimeInstance();
-                    String updatedOn = df.format(new Date(weatherCity.getDt() * 1000));
-                    updatedField.setText(getString(R.string.last_update) + " " + updatedOn);
-                    Picasso.get().load("http://openweathermap.org/img/w/" + weatherCity.getWeather().get(0).getIcon() + ".png").into(ivIcon);
-                } else {
-                    cityField.setText("");
-                    detailsField.setText("");
-                    currentTemperatureField.setText("");
-                    updatedField.setText("");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setTitle(R.string.error);
-                    builder.setMessage(R.string.error_city);
-                    builder.setPositiveButton(R.string.ok, null);
-                    builder.show();
+
+                    city = weatherCity.getCity().getName();
+
+                    recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                    recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+                    Adapter adapter = new Adapter(weatherCity.getList(), city, MainActivity.this);
+                    recyclerView.setAdapter(adapter);
                 }
             }
 

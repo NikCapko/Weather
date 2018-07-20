@@ -14,4 +14,5 @@
     <string name="lat">Latitude</string>
     <string name="lon">Longitude</string>
     <string name="error_net">Problems with the Internet connection</string>
+    <string name="time">Time</string>
 </resources>
