@@ -41,7 +41,7 @@
             android:id="@+id/iv_icon"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:contentDescription="icon_weather" />
+            android:contentDescription="@string/icon_weather" />
 
         <TextView
             android:id="@+id/tv_temperature"
