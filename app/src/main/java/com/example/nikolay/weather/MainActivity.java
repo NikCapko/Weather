@@ -15,9 +15,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -52,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
     TextView updatedField;
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
+    @BindView(R.id.iv_icon)
+    ImageView ivIcon;
     @BindView(R.id.current_temperature_field)
     TextView currentTemperatureField;
     @BindView(R.id.details_field)
@@ -110,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
                     DateFormat df = DateFormat.getDateTimeInstance();
                     String updatedOn = df.format(new Date(weatherCity.getDt() * 1000));
                     updatedField.setText(getString(R.string.last_update) + " " + updatedOn);
+                    Picasso.get().load("http://openweathermap.org/img/w/" + weatherCity.getWeather().get(0).getIcon() + ".png").into(ivIcon);
                 } else {
                     cityField.setText("");
                     detailsField.setText("");
