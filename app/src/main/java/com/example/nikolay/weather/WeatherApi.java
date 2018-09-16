@@ -6,7 +6,7 @@ import retrofit2.http.Query;
 
 public interface WeatherApi {
     @GET("weather?units=metric&lang=ru")
-    Call<WeatherModel> getWeatherCity(@Query("q") String cityName, @Query("appid") String token);
+    Call<WeatherModel> getWeatherCity(@Query("q") String cityName, @Query("appid") String token, @Query("lang") String lang);
     @GET("weather?units=metric&lang=ru")
-    Call<WeatherModel> getWeatherCoords(@Query("lat") Double lat, @Query("lon") Double lon, @Query("appid") String token);
+    Call<WeatherModel> getWeatherCoords(@Query("lat") Double lat, @Query("lon") Double lon, @Query("appid") String token, @Query("lang") String lang);
 }

@@ -4,7 +4,8 @@
     <item
         android:id="@+id/update"
         android:orderInCategory="1"
-        android:title="@string/update"
+        android:title=""
+        android:icon="@drawable/ic_refresh"
         app:showAsAction="always" />
     <item
         android:id="@+id/change_city"

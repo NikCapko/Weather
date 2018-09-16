@@ -4,50 +4,42 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.squareup.picasso.Picasso;
-
-import java.text.DateFormat;
-import java.util.Date;
-
+import android.view.*;
+import android.widget.*;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.squareup.picasso.Picasso;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.example.nikolay.weather.R.layout.activity_main;
+import java.text.DateFormat;
+import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     public static String city = "Moscow";
-    final String SAVED_TEXT = "saved_text";
+    private final String SAVED_TEXT = "SAVED_TEXT";
     public String TAG = "TAG";
-    String token = Token.getToken();
+    private String token = Token.getToken();
+    private String lang;
 
-    SharedPreferences sPref;
+    private SharedPreferences sPref;
 
-    Coord coords;
+    private Coord coords;
 
-    Retrofit retrofit;
-    WeatherApi weatherApi;
+    private Retrofit retrofit;
+    private WeatherApi weatherApi;
+    private Call<WeatherModel> messages;
 
     @BindView(R.id.city_field)
     TextView cityField;
@@ -61,16 +53,18 @@ public class MainActivity extends AppCompatActivity {
     TextView currentTemperatureField;
     @BindView(R.id.details_field)
     TextView detailsField;
-
+    @BindView(R.id.swipe_container)
+    SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(activity_main);
+        setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-
+        swipeContainer.setOnRefreshListener(this);
         loadCity();
+        lang = getString(R.string.lang);
 
         retrofit = new Retrofit.Builder()
                 .baseUrl("http://api.openweathermap.org/data/2.5/")
@@ -83,60 +77,74 @@ public class MainActivity extends AppCompatActivity {
 
     void getWeatherCity() {
         progressBar.setVisibility(ProgressBar.VISIBLE);
-        Call<WeatherModel> messages = weatherApi.getWeatherCity(city, token);
-        updateInfo(messages);
-        progressBar.setVisibility(ProgressBar.INVISIBLE);
+        messages = weatherApi.getWeatherCity(city, token, lang);
+        refresh();
+        progressBar.setVisibility(ProgressBar.GONE);
     }
 
     void getWeatherCoords(Coord coordsWeather) {
         progressBar.setVisibility(ProgressBar.VISIBLE);
-        Call<WeatherModel> messages = weatherApi.getWeatherCoords(coordsWeather.getLat(), coordsWeather.getLon(), token);
-        updateInfo(messages);
-        progressBar.setVisibility(ProgressBar.INVISIBLE);
+        messages = weatherApi.getWeatherCoords(coordsWeather.getLat(), coordsWeather.getLon(), token, lang);
+        refresh();
+        progressBar.setVisibility(ProgressBar.GONE);
     }
 
-    void updateInfo(Call<WeatherModel> messages) {
-        messages.enqueue(new Callback<WeatherModel>() {
-            @SuppressLint({"SetTextI18n", "DefaultLocale"})
+    @Override
+    public void onRefresh() {
+        swipeContainer.setRefreshing(true);
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onResponse(@NonNull Call<WeatherModel> call, @NonNull Response<WeatherModel> response) {
-                Log.d(TAG, "response " + response.body());
+            public void run() {
+                refresh();
+            }
+        }, 2000);
+        swipeContainer.setRefreshing(false);
+    }
 
-                WeatherModel weatherCity = response.body();
+    private void refresh() {
+        if (!messages.isExecuted()) {
+            messages.enqueue(new Callback<WeatherModel>() {
+                @SuppressLint({"SetTextI18n", "DefaultLocale"})
+                @Override
+                public void onResponse(@NonNull Call<WeatherModel> call, @NonNull Response<WeatherModel> response) {
+                    Log.d(TAG, "response " + response.body());
 
-                if (weatherCity != null) {
-                    city = weatherCity.getName();
-                    coords = weatherCity.getCoord();
-                    cityField.setText(weatherCity.getName() + ", " + weatherCity.getSys().getCountry());
-                    detailsField.setText(weatherCity.getWeather().get(0).getDescription().toUpperCase() +
-                            "\n" + getString(R.string.humidity) + " " + weatherCity.getMain().getHumidity() + "%" +
-                            "\n" + getString(R.string.pressure) + " " + weatherCity.getMain().getPressure() + " hPa");
-                    currentTemperatureField.setText(String.format("%.2f", weatherCity.getMain().getTemp()) + " ℃");
-                    DateFormat df = DateFormat.getDateTimeInstance();
-                    String updatedOn = df.format(new Date(weatherCity.getDt() * 1000));
-                    updatedField.setText(getString(R.string.last_update) + " " + updatedOn);
-                    Picasso.get().load("http://openweathermap.org/img/w/" + weatherCity.getWeather().get(0).getIcon() + ".png").into(ivIcon);
-                } else {
-                    cityField.setText("");
-                    detailsField.setText("");
-                    currentTemperatureField.setText("");
-                    updatedField.setText("");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setTitle(R.string.error);
-                    builder.setMessage(R.string.error_city);
-                    builder.setPositiveButton(R.string.ok, null);
-                    builder.show();
+                    WeatherModel weatherCity = response.body();
+
+                    if (weatherCity != null) {
+                        city = weatherCity.getName();
+                        coords = weatherCity.getCoord();
+                        cityField.setText(weatherCity.getName() + ", " + weatherCity.getSys().getCountry());
+                        detailsField.setText(weatherCity.getWeather().get(0).getDescription().toUpperCase() +
+                                "\n" + getString(R.string.humidity) + " " + weatherCity.getMain().getHumidity() + "%" +
+                                "\n" + getString(R.string.pressure) + " " + weatherCity.getMain().getPressure() + " hPa");
+                        currentTemperatureField.setText(String.format("%.2f", weatherCity.getMain().getTemp()) + " ℃");
+                        DateFormat df = DateFormat.getDateTimeInstance();
+                        String updatedOn = df.format(new Date(weatherCity.getDt() * 1000));
+                        updatedField.setText(getString(R.string.last_update) + " " + updatedOn);
+                        Picasso.get().load("http://openweathermap.org/img/w/" + weatherCity.getWeather().get(0).getIcon() + ".png").into(ivIcon);
+                    } else {
+                        cityField.setText("");
+                        detailsField.setText("");
+                        currentTemperatureField.setText("");
+                        updatedField.setText("");
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setTitle(R.string.error);
+                        builder.setMessage(R.string.error_city);
+                        builder.setPositiveButton(R.string.ok, null);
+                        builder.show();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<WeatherModel> call, @NonNull Throwable t) {
-                Log.d(TAG, t.getMessage());
-                Toast toast = Toast.makeText(MainActivity.this, R.string.error_net, Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-            }
-        });
+                @Override
+                public void onFailure(@NonNull Call<WeatherModel> call, @NonNull Throwable t) {
+                    Log.d(TAG, t.getMessage());
+                    Toast toast = Toast.makeText(MainActivity.this, R.string.error_net, Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                }
+            });
+        }
     }
 
     @Override
@@ -220,12 +228,11 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor ed = sPref.edit();
         ed.putString(SAVED_TEXT, city);
         ed.apply();
-        getWeatherCity();
     }
 
     void loadCity() {
         sPref = getPreferences(MODE_PRIVATE);
-        city = sPref.getString(SAVED_TEXT, "");
+        city = sPref.getString(SAVED_TEXT, city);
     }
 
     @Override
