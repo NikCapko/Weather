@@ -16,4 +16,5 @@
     <string name="error_net">Проблемы с подключением к интернету</string>
     <string name="time">Время</string>
     <string name="icon_weather">Иконка погоды</string>
+    <string name="lang">ru</string>
 </resources>
