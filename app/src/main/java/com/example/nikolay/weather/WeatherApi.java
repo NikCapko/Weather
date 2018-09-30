@@ -6,11 +6,14 @@ import retrofit2.http.Query;
 
 public interface WeatherApi {
     @GET("weather")
-    Call<WeatherModel> getWeatherCity(@Query("q") String cityName);
+    Call<WeatherModel> getWeatherCity(@Query("q") String cityName, @Query("appid") String token, @Query("units") String units, @Query("lang") String lang);
+
     @GET("weather")
-    Call<WeatherModel> getWeatherCoords(@Query("lat") Double lat, @Query("lon") Double lon);
+    Call<WeatherModel> getWeatherCoords(@Query("lat") Double lat, @Query("lon") Double lon, @Query("appid") String token, @Query("units") String units, @Query("lang") String lang);
+
     @GET("forecast")
-    Call<WeatherModel> getWeatherCityForecast(@Query("q") String cityName);
+    Call<WeatherModel> getWeatherCityForecast(@Query("q") String cityName, @Query("appid") String token, @Query("units") String units, @Query("lang") String lang);
+
     @GET("forecast")
-    Call<WeatherModel> getWeatherCoordsForecast(@Query("lat") Double lat, @Query("lon") Double lon);
+    Call<WeatherModel> getWeatherCoordsForecast(@Query("lat") Double lat, @Query("lon") Double lon, @Query("appid") String token, @Query("units") String units, @Query("lang") String lang);
 }

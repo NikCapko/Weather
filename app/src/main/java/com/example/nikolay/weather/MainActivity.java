@@ -26,6 +26,7 @@ import com.squareup.picasso.Picasso;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -70,31 +71,15 @@ public class MainActivity extends AppCompatActivity {
         loadCity();
         LANG = getString(R.string.lang);
 
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(new Interceptor() {
-            @Override
-            public okhttp3.Response intercept(Chain chain) throws IOException {
-                Request original = chain.request();
-
-                Request request = original.newBuilder()
-                        .header("appid", token)
-                        .header("lang", LANG)
-                        .header("units", UNITS)
-                        .method(original.method(), original.body())
-                        .build();
-
-                okhttp3.Response response = chain.proceed(request);
-
-                return response;
-            }
-        });
-
-        OkHttpClient client = httpClient.build();
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor).build();
 
         retrofit = new Retrofit.Builder()
+                .client(client)
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
                 .build();
 
         weatherApi = retrofit.create(WeatherApi.class);
@@ -102,12 +87,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getWeatherCity() {
-        Call<WeatherModel> messages = weatherApi.getWeatherCityForecast(city);
+        Call<WeatherModel> messages = weatherApi.getWeatherCityForecast(city, token, UNITS, LANG);
+        //Log.d(TAG, "<-- request " + messages.request().url().toString());
         updateInfo(messages);
     }
 
     private void getWeatherCoords(Coord coordsWeather) {
-        Call<WeatherModel> messages = weatherApi.getWeatherCoordsForecast(coordsWeather.getLat(), coordsWeather.getLon());
+        Call<WeatherModel> messages = weatherApi.getWeatherCoordsForecast(coordsWeather.getLat(), coordsWeather.getLon(), token, UNITS, LANG);
         updateInfo(messages);
     }
 
@@ -116,8 +102,7 @@ public class MainActivity extends AppCompatActivity {
             @SuppressLint({"SetTextI18n", "DefaultLocale"})
             @Override
             public void onResponse(@NonNull Call<WeatherModel> call, @NonNull Response<WeatherModel> response) {
-                Log.d(TAG, "response " + response.body());
-
+                //Log.d(TAG, "<-- response " + response.raw().body());
                 WeatherModel weatherCity = response.body();
 
                 if (weatherCity != null) {
