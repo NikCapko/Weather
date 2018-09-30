@@ -16,6 +16,8 @@ import android.widget.*;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.squareup.picasso.Picasso;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,8 +32,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public static String city = "Moscow";
     private final String SAVED_TEXT = "SAVED_TEXT";
     public String TAG = "TAG";
-    private String token = Token.getToken();
-    private String lang;
+    public String BASE_URL = "http://api.openweathermap.org/data/2.5/";
+    private String LANG = "en";
+    private String UNITS = "metric";
+
+    String token = Token.getToken();
 
     private SharedPreferences sPref;
 
@@ -64,10 +69,15 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         ButterKnife.bind(this);
         swipeContainer.setOnRefreshListener(this);
         loadCity();
-        lang = getString(R.string.lang);
+        LANG = getString(R.string.lang);
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor).build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://api.openweathermap.org/data/2.5/")
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -77,14 +87,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     void getWeatherCity() {
         progressBar.setVisibility(ProgressBar.VISIBLE);
-        messages = weatherApi.getWeatherCity(city, token, lang);
+        messages = weatherApi.getWeatherCity(city, token, UNITS, LANG);
         refresh();
         progressBar.setVisibility(ProgressBar.GONE);
     }
 
     void getWeatherCoords(Coord coordsWeather) {
         progressBar.setVisibility(ProgressBar.VISIBLE);
-        messages = weatherApi.getWeatherCoords(coordsWeather.getLat(), coordsWeather.getLon(), token, lang);
+        messages = weatherApi.getWeatherCoords(coordsWeather.getLat(), coordsWeather.getLon(), token, UNITS, LANG);
         refresh();
         progressBar.setVisibility(ProgressBar.GONE);
     }
@@ -97,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             public void run() {
                 refresh();
             }
-        }, 2000);
+        }, 3000);
         swipeContainer.setRefreshing(false);
     }
 
