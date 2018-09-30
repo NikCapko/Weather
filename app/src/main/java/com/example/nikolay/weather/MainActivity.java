@@ -3,6 +3,7 @@ package com.example.nikolay.weather;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -16,7 +17,10 @@ import android.widget.*;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.squareup.picasso.Picasso;
+import okhttp3.Authenticator;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Route;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,6 +28,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -74,12 +79,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(interceptor).build();
-
-        retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addInterceptor(interceptor)
                 .build();
+
+        Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create());
+        if (BuildConfig.DEBUG)
+            retrofitBuilder.client(client);
+
+        retrofit = retrofitBuilder.build();
 
         weatherApi = retrofit.create(WeatherApi.class);
         getWeatherCity();
