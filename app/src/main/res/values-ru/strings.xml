@@ -4,6 +4,8 @@
     <string name="change_city">Изменить город</string>
     <string name="humidity">Влажность:</string>
     <string name="pressure">Давление:</string>
+    <string name="cloud">Облачность:</string>
+    <string name="wind">Ветер:</string>
     <string name="last_update">Обновлено:</string>
     <string name="error">Ошибка</string>
     <string name="error_city">Вы неправильно указали город</string>

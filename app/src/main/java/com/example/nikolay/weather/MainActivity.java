@@ -14,9 +14,12 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 import com.squareup.picasso.Picasso;
+
 import okhttp3.Authenticator;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -136,7 +139,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                         cityField.setText(weatherCity.getName() + ", " + weatherCity.getSys().getCountry());
                         detailsField.setText(weatherCity.getWeather().get(0).getDescription().toUpperCase() +
                                 "\n" + getString(R.string.humidity) + " " + weatherCity.getMain().getHumidity() + "%" +
-                                "\n" + getString(R.string.pressure) + " " + weatherCity.getMain().getPressure() + " hPa");
+                                "\n" + getString(R.string.pressure) + " " + weatherCity.getMain().getPressure() * 0.75 + " mmHg" +
+                                "\n" + getString(R.string.cloud) + " " + weatherCity.getClouds().getAll() + " %" +
+                                "\n" + getString(R.string.wind) + " " + weatherCity.getWind().getDeg() + " " + weatherCity.getWind().getSpeed() + " m/s");
                         currentTemperatureField.setText(String.format("%.2f", weatherCity.getMain().getTemp()) + " ℃");
                         DateFormat df = DateFormat.getDateTimeInstance();
                         String updatedOn = df.format(new Date(weatherCity.getDt() * 1000));

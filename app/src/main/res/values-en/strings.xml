@@ -4,6 +4,8 @@
     <string name="change_city">Change city</string>
     <string name="humidity">Humidity:</string>
     <string name="pressure">Pressure:</string>
+    <string name="cloud">Cloud:</string>
+    <string name="wind">Wind:</string>
     <string name="last_update">Last update:</string>
     <string name="error">Error</string>
     <string name="error_city">You have entered the wrong city</string>
