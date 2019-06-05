@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                                 "\n" + getString(R.string.humidity) + " " + weatherCity.getMain().getHumidity() + "%" +
                                 "\n" + getString(R.string.pressure) + " " + weatherCity.getMain().getPressure() * 0.75 + " mmHg" +
                                 "\n" + getString(R.string.cloud) + " " + weatherCity.getClouds().getAll() + " %" +
-                                "\n" + getString(R.string.wind) + " " + weatherCity.getWind().getDeg() + " " + weatherCity.getWind().getSpeed() + " m/s");
+                                "\n" + getString(R.string.wind) + " " + getWindDeg(weatherCity.getWind().getDeg()) + " rumb " + weatherCity.getWind().getSpeed() + " m/s");
                         currentTemperatureField.setText(String.format("%.2f", weatherCity.getMain().getTemp()) + " ℃");
                         DateFormat df = DateFormat.getDateTimeInstance();
                         String updatedOn = df.format(new Date(weatherCity.getDt() * 1000));
@@ -169,6 +169,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 }
             });
         }
+    }
+
+    int getWindDeg(double deg) {
+        return ((int) (deg * 0.088889)) % 2 == 0 ? ((int) (deg * 0.088889)) : ((int) (deg * 0.088889)) + 1;
     }
 
     @Override
