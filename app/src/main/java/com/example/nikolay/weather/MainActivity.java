@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                         cityField.setText(weatherCity.getName() + ", " + weatherCity.getSys().getCountry());
                         detailsField.setText(weatherCity.getWeather().get(0).getDescription().toUpperCase() +
                                 "\n" + getString(R.string.humidity) + " " + weatherCity.getMain().getHumidity() + "%" +
-                                "\n" + getString(R.string.pressure) + " " + weatherCity.getMain().getPressure() * 0.75 + " mmHg" +
+                                "\n" + getString(R.string.pressure) + " " + String.format("%.2f", weatherCity.getMain().getPressure() * 0.75) + " mmHg" +
                                 "\n" + getString(R.string.cloud) + " " + weatherCity.getClouds().getAll() + " %" +
                                 "\n" + getString(R.string.wind) + " " + getWindDeg(weatherCity.getWind().getDeg()) + " rumb " + weatherCity.getWind().getSpeed() + " m/s");
                         currentTemperatureField.setText(String.format("%.2f", weatherCity.getMain().getTemp()) + " ℃");
@@ -209,19 +209,18 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         city = input.getText().toString();
+                        saveCity();
                         getWeatherCity();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ;
                     }
                 });
         builder.show();
     }
 
-    @SuppressLint("SetTextI18n")
     private void inputCoords() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -265,7 +264,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     protected void onDestroy() {
-        saveCity();
         super.onDestroy();
     }
 }
