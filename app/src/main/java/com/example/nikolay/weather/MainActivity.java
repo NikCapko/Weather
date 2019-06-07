@@ -37,7 +37,7 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
-    public static String city = "Moscow";
+    public static String city = "Simferopol";
     private final String SAVED_TEXT = "SAVED_TEXT";
     public String TAG = "TAG";
     public String BASE_URL = "http://api.openweathermap.org/data/2.5/";
