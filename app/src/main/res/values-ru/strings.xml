@@ -17,4 +17,25 @@
     <string name="lon">Долгота</string>
     <string name="error_net">Проблемы с подключением к интернету</string>
     <string name="lang">ru</string>
+    <string name="meter_per_second">м/с</string>
+    <string name="mmHg">мм рт. ст.</string>
+
+    <!-- wind direction -->
+    <string name="wind_direction_nord">С</string>
+    <string name="wind_direction_nord_nord_east">ССВ</string>
+    <string name="wind_direction_nord_east">СВ</string>
+    <string name="wind_direction_east_nord_east">ВСВ</string>
+    <string name="wind_direction_east">В</string>
+    <string name="wind_direction_east_south_east">ВЮВ</string>
+    <string name="wind_direction_south_east">ЮВ</string>
+    <string name="wind_direction_south_south_east">ЮЮВ</string>
+    <string name="wind_direction_south">Ю</string>
+    <string name="wind_direction_south_south_west">ЮЮЗ</string>
+    <string name="wind_direction_south_west">ЮЗ</string>
+    <string name="wind_direction_west_south_west">ЗЮЗ</string>
+    <string name="wind_direction_west">З</string>
+    <string name="wind_direction_west_nord_west">ЗСЗ</string>
+    <string name="wind_direction_nord_west">СЗ</string>
+    <string name="wind_direction_nord_nord_west">ССЗ</string>
+
 </resources>

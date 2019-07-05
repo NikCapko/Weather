@@ -17,4 +17,25 @@
     <string name="lon">Longitude</string>
     <string name="error_net">Problems with the Internet connection</string>
     <string name="lang">en</string>
+    <string name="meter_per_second">m/s</string>
+    <string name="mmHg">mmHg</string>
+
+    <!-- wind direction -->
+    <string name="wind_direction_nord">N</string>
+    <string name="wind_direction_nord_nord_east">NNE</string>
+    <string name="wind_direction_nord_east">NE</string>
+    <string name="wind_direction_east_nord_east">ENE</string>
+    <string name="wind_direction_east">E</string>
+    <string name="wind_direction_east_south_east">ESE</string>
+    <string name="wind_direction_south_east">SE</string>
+    <string name="wind_direction_south_south_east">SSE</string>
+    <string name="wind_direction_south">S</string>
+    <string name="wind_direction_south_south_west">SSW</string>
+    <string name="wind_direction_south_west">SW</string>
+    <string name="wind_direction_west_south_west">WSW</string>
+    <string name="wind_direction_west">W</string>
+    <string name="wind_direction_west_nord_west">WNW</string>
+    <string name="wind_direction_nord_west">NW</string>
+    <string name="wind_direction_nord_nord_west">NNW</string>
+
 </resources>
